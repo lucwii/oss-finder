@@ -1,12 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Terminal } from "lucide-react";
+import { Terminal, LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const { user, loading, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -47,22 +49,47 @@ export default function Navbar() {
               {link}
             </a>
           ))}
+          <Link
+            href="/explore"
+            className="text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200"
+          >
+            Explore
+          </Link>
         </div>
 
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
-          <Link
-            href="/explore"
-            className="hidden sm:block text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-transparent hover:border-[#27272a]"
-          >
-            Explore
-          </Link>
-          <Link
-            href="/explore"
-            className="btn-glow text-sm font-medium bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-lg transition-colors duration-200"
-          >
-            Get Started
-          </Link>
+          {!loading && (
+            user ? (
+              <>
+                <span className="hidden sm:block text-sm text-[#a1a1aa] font-mono truncate max-w-[160px]">
+                  {user.email}
+                </span>
+                <button
+                  onClick={signOut}
+                  className="flex items-center gap-1.5 text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-[#27272a] hover:border-[#3f3f46]"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="hidden sm:block text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-transparent hover:border-[#27272a]"
+                >
+                  Log In
+                </Link>
+                <Link
+                  href="/register"
+                  className="btn-glow text-sm font-medium bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-lg transition-colors duration-200"
+                >
+                  Get Started
+                </Link>
+              </>
+            )
+          )}
         </div>
       </div>
     </motion.nav>
