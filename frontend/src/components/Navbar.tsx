@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Terminal } from "lucide-react";
 import { motion } from "framer-motion";
+import Link from "next/link";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -50,12 +51,18 @@ export default function Navbar() {
 
         {/* CTA buttons */}
         <div className="flex items-center gap-3">
-          <button className="hidden sm:block text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-transparent hover:border-[#27272a]">
-            Log in
-          </button>
-          <button className="btn-glow text-sm font-medium bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-lg transition-colors duration-200">
+          <Link
+            href="/explore"
+            className="hidden sm:block text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-transparent hover:border-[#27272a]"
+          >
+            Explore
+          </Link>
+          <Link
+            href="/explore"
+            className="btn-glow text-sm font-medium bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-lg transition-colors duration-200"
+          >
             Get Started
-          </button>
+          </Link>
         </div>
       </div>
     </motion.nav>
