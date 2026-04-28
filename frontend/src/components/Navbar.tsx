@@ -1,0 +1,63 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { Terminal } from "lucide-react";
+import { motion } from "framer-motion";
+
+export default function Navbar() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <motion.nav
+      initial={{ y: -20, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? "bg-[#0a0a0a]/90 backdrop-blur-xl border-b border-[#27272a]"
+          : "bg-transparent"
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        {/* Logo */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg flex items-center justify-center">
+            <Terminal className="w-4 h-4 text-[#22c55e]" strokeWidth={2} />
+          </div>
+          <span className="font-semibold text-white tracking-tight text-[15px]">
+            ContribFinder
+          </span>
+        </div>
+
+        {/* Nav links */}
+        <div className="hidden md:flex items-center gap-8">
+          {["How it works", "Features"].map((link) => (
+            <a
+              key={link}
+              href={`#${link.toLowerCase().replace(/\s+/g, "-")}`}
+              className="text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200"
+            >
+              {link}
+            </a>
+          ))}
+        </div>
+
+        {/* CTA buttons */}
+        <div className="flex items-center gap-3">
+          <button className="hidden sm:block text-sm text-[#a1a1aa] hover:text-white transition-colors duration-200 px-4 py-2 rounded-lg border border-transparent hover:border-[#27272a]">
+            Log in
+          </button>
+          <button className="btn-glow text-sm font-medium bg-[#22c55e] hover:bg-[#16a34a] text-black px-4 py-2 rounded-lg transition-colors duration-200">
+            Get Started
+          </button>
+        </div>
+      </div>
+    </motion.nav>
+  );
+}
