@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import type { OnboardingData } from '@/lib/onboarding';
@@ -18,6 +18,7 @@ type Direction = 'forward' | 'backward';
 export default function OnboardingPage() {
   const router = useRouter();
 
+  const [checking, setChecking]           = useState(true);
   const [step, setStep]                   = useState(1);
   const [direction, setDirection]         = useState<Direction>('forward');
   const [hasNavigated, setHasNavigated]   = useState(false);
@@ -32,6 +33,21 @@ export default function OnboardingPage() {
     interests:              [],
     goal:                   '',
   });
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) { router.replace('/login'); return; }
+
+      if (user.user_metadata?.onboarding_completed) {
+        router.replace('/dashboard');
+        return;
+      }
+
+      setChecking(false);
+    });
+  }, [router]);
+
+  if (checking) return null;
 
   const triggerShake = () => {
     setShaking(true);
@@ -74,6 +90,8 @@ export default function OnboardingPage() {
         const body = await res.json().catch(() => ({}));
         throw new Error(body?.message ?? 'Failed to save profile');
       }
+
+      await supabase.auth.updateUser({ data: { onboarding_completed: true } });
 
       router.push('/dashboard');
     } catch (err) {
