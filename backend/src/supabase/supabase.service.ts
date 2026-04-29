@@ -13,7 +13,7 @@ export class SupabaseService {
     );
   }
 
-  get db(): SupabaseClient {
+  getdb(): SupabaseClient {
     return this.client;
   }
 }

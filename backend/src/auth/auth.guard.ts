@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     const {
       data: { user },
       error,
-    } = await this.supabase.db.auth.getUser(token);
+    } = await this.supabase.getdb().auth.getUser(token);
 
     if (error || !user) throw new UnauthorizedException();
 

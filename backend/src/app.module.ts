@@ -4,12 +4,14 @@ import { AppService } from './app.service';
 import { GithubModule } from './github/github.module';
 import { SupabaseModule } from './supabase/supabase.module';
 import { ConfigModule } from '@nestjs/config';
+import { OnboardingModule } from './onboarding/onboarding.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     SupabaseModule,
     GithubModule,
+    OnboardingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
