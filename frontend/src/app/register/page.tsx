@@ -57,7 +57,9 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!authLoading && user) router.push('/dashboard');
+    if (!authLoading && user) {
+      router.push(user.user_metadata?.onboarding_completed ? '/dashboard' : '/onboarding');
+    }
   }, [user, authLoading, router]);
 
   const strength = getStrength(password);
