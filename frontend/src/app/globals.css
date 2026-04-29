@@ -125,6 +125,50 @@ body {
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Onboarding step transitions */
+@keyframes ob-enter-forward {
+  from { opacity: 0; transform: translateX(48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ob-enter-backward {
+  from { opacity: 0; transform: translateX(-48px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes ob-initial {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes ob-shake {
+  0%, 100% { transform: translateX(0); }
+  20%      { transform: translateX(-5px); }
+  40%      { transform: translateX(5px); }
+  60%      { transform: translateX(-3px); }
+  80%      { transform: translateX(3px); }
+}
+@keyframes ob-check-in {
+  0%   { opacity: 0; transform: scale(0.4) rotate(-10deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+@keyframes ob-tag-bounce {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.08); }
+  70%  { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+@keyframes ob-dot-pulse {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.28); }
+  100% { transform: scale(1); }
+}
+@keyframes ob-fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.ob-enter-forward  { animation: ob-enter-forward  0.3s ease-in-out both; }
+.ob-enter-backward { animation: ob-enter-backward 0.3s ease-in-out both; }
+.ob-initial        { animation: ob-initial        0.35s ease both; }
+
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #111; }
