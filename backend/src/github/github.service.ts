@@ -1,11 +1,17 @@
 import { HttpService } from '@nestjs/axios';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { GithubIssue, GithubRepo, RepoRecommendation } from './types/github.interfaces';
 import { first, firstValueFrom } from 'rxjs';
+import { OnboardingService } from 'src/onboarding/onboarding.service';
 
 @Injectable()
 export class GithubService {
-    constructor(private readonly httpService: HttpService) {}
+    private readonly logger = new Logger(GithubService.name);
+
+    constructor(
+        private readonly httpService: HttpService,
+        private readonly onboardingService: OnboardingService
+    ) {}
 
 
     // MAIN METHOD: Get top repo recommendations based on language and difficulty level
