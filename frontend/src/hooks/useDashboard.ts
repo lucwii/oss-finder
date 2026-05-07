@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import type {
   Recommendation,
@@ -74,6 +74,7 @@ function pruneOldCache(userId: string): void {
 
 export function useDashboard() {
   const [state, setState] = useState<DashboardState>(DEFAULT_STATE);
+  const userIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     async function load() {
@@ -88,6 +89,7 @@ export function useDashboard() {
         }
 
         const userId = session.user.id;
+        userIdRef.current = userId;
 
         // Show cached data immediately — no loading spinner for returning users
         const cached = readCache(userId);
@@ -146,6 +148,16 @@ export function useDashboard() {
   }, []);
 
   async function trackRepoView(repoData: any) {
+    // Optimistic update — increment counter immediately in UI and cache
+    setState((prev) => {
+      const newState = {
+        ...prev,
+        stats: { ...prev.stats, repos_viewed: prev.stats.repos_viewed + 1 },
+      };
+      if (userIdRef.current) writeCache(userIdRef.current, newState);
+      return newState;
+    });
+
     const {
       data: { session },
     } = await supabase.auth.getSession();

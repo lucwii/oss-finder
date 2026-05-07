@@ -10,9 +10,10 @@ interface FeaturedCardProps {
   rec: Recommendation;
   bookmarked: boolean;
   onBookmark: (id: number) => void;
+  onRepoClick?: (rec: Recommendation) => void;
 }
 
-export function FeaturedCard({ rec, bookmarked, onBookmark }: FeaturedCardProps) {
+export function FeaturedCard({ rec, bookmarked, onBookmark, onRepoClick }: FeaturedCardProps) {
   const [bookmarkPop, setBookmarkPop] = useState(false);
   const lang = getLanguageBadge(rec.repo.language);
   const [owner, repoName] = rec.repo.full_name.split('/');
@@ -182,6 +183,7 @@ export function FeaturedCard({ rec, bookmarked, onBookmark }: FeaturedCardProps)
                   href={rec.repo.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => onRepoClick?.(rec)}
                   className="flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap"
                   style={{ background: '#22c55e', color: '#000000' }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = '#16a34a')}

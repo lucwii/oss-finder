@@ -11,6 +11,7 @@ interface RepoCardProps {
   onToggleExpand: () => void;
   bookmarked: boolean;
   onBookmark: (id: number) => void;
+  onRepoClick?: (rec: Recommendation) => void;
   animationDelay?: string;
 }
 
@@ -20,6 +21,7 @@ export function RepoCard({
   onToggleExpand,
   bookmarked,
   onBookmark,
+  onRepoClick,
   animationDelay = '0s',
 }: RepoCardProps) {
   const [hovered, setHovered] = useState(false);
@@ -196,6 +198,7 @@ export function RepoCard({
             href={rec.repo.html_url}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => onRepoClick?.(rec)}
             className="flex items-center gap-1 text-xs font-medium cursor-pointer transition-colors duration-150"
             style={{ color: '#52525b' }}
             onMouseEnter={(e) => (e.currentTarget.style.color = '#22c55e')}

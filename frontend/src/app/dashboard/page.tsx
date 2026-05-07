@@ -188,6 +188,7 @@ export default function DashboardPage() {
                     rec={featured}
                     bookmarked={bookmarked.has(featured.repo.id)}
                     onBookmark={toggleBookmark}
+                    onRepoClick={(rec) => trackRepoView(rec.repo)}
                   />
                 </div>
               )}
@@ -202,6 +203,7 @@ export default function DashboardPage() {
                       onToggleExpand={() => toggleExpand(rec.repo.id)}
                       bookmarked={bookmarked.has(rec.repo.id)}
                       onBookmark={toggleBookmark}
+                      onRepoClick={(rec) => trackRepoView(rec.repo)}
                       animationDelay={`${0.6 + i * 0.08}s`}
                     />
                   ))}
