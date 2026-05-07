@@ -2,12 +2,12 @@ import { Module } from '@nestjs/common';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
 import { GithubModule } from 'src/github/github.module';
-import { OnboardingModule } from 'src/onboarding/onboarding.module';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   imports: [
     GithubModule,
-    OnboardingModule,
+    AuthModule,
   ],
   controllers: [DashboardController],
   providers: [DashboardService],

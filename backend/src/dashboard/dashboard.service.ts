@@ -1,8 +1,7 @@
 // backend/src/dashboard/dashboard.service.ts
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SupabaseService } from '../supabase/supabase.service';
 import { GithubService } from '../github/github.service';
-import { OnboardingService } from '../onboarding/onboarding.service';
 import {
   DailyRecommendation,
   UserStats,
@@ -12,30 +11,33 @@ import {
 
 @Injectable()
 export class DashboardService {
+  private readonly logger = new Logger(DashboardService.name);
+
   constructor(
     private readonly supabaseService: SupabaseService,
     private readonly githubService: GithubService,
-    private readonly onboardingService: OnboardingService,
   ) {}
 
   // ============================================
   // GLAVNI METOD — sve u jednom pozivu
   // ============================================
   async getDashboardData(userId: string): Promise<DashboardData> {
-    // Sve fetchujemo paralelno da bude brže
-    const [recommendations, trending, stats, recentlyViewed] =
-      await Promise.all([
-        this.getDailyRecommendations(userId),
-        this.getTrending(),
-        this.getOrCreateStats(userId),
-        this.getRecentlyViewed(userId),
-      ]);
+    const [recommendations, trending, stats, recentlyViewed] = await Promise.all([
+      this.getDailyRecommendations(userId).catch((err) => {
+        this.logger.error('getDailyRecommendations failed', err?.message);
+        return [];
+      }),
+      this.getTrending().catch((err) => {
+        this.logger.error('getTrending failed', err?.message);
+        return [];
+      }),
+      this.getOrCreateStats(userId).catch(() => this.emptyStats(userId)),
+      this.getRecentlyViewed(userId).catch(() => []),
+    ]);
 
-    // Achievements računamo na osnovu stats
     const achievements = this.calculateAchievements(stats);
 
-    // Ažuriraj streak
-    await this.updateStreak(userId, stats);
+    this.updateStreak(userId, stats).catch(() => {});
 
     return {
       recommendations,
@@ -46,14 +48,24 @@ export class DashboardService {
     };
   }
 
+  private emptyStats(userId: string): UserStats {
+    return {
+      user_id: userId,
+      repos_viewed: 0,
+      issues_clicked: 0,
+      days_streak: 0,
+      last_active_date: '',
+      achievements: [],
+    };
+  }
+
   // ============================================
   // DAILY RECOMMENDATIONS SA KEŠIRANJEM
   // ============================================
   async getDailyRecommendations(userId: string): Promise<DailyRecommendation[]> {
     const supabase = this.supabaseService.getdb();
-    const today = new Date().toISOString().split('T')[0]; // "2024-01-15"
+    const today = new Date().toISOString().split('T')[0];
 
-    // Proveri da li već postoje preporuke za danas
     const { data: cached } = await supabase
       .from('daily_recommendations')
       .select('repos')
@@ -61,17 +73,18 @@ export class DashboardService {
       .eq('generated_date', today)
       .single();
 
-    // Ako postoje — vrati ih odmah (ne udari GitHub API)
-    if (cached) {
+    // Koristi keš samo ako nije prazan (prazan može biti od prethodnih grešaka)
+    if (cached && Array.isArray(cached.repos) && cached.repos.length > 0) {
+      this.logger.log(`Cache hit: ${cached.repos.length} repos for user ${userId}`);
       return cached.repos as DailyRecommendation[];
     }
 
-    // Ako ne postoje — fetchuj nove
-    const profile = await this.onboardingService.getProfile(userId);
+    this.logger.log(`Fetching fresh recommendations for user ${userId}`);
     const recommendations = await this.githubService
       .getPersonalizedRecommendations(userId);
 
-    // Dodaj match_percentage na svaki repo
+    this.logger.log(`GitHub returned ${recommendations.length} recommendations`);
+
     const withPercentage = recommendations.map((rec) => ({
       ...rec,
       match_percentage: this.calculateMatchPercentage(rec.score),
@@ -139,18 +152,15 @@ export class DashboardService {
       .eq('user_id', userId)
       .single();
 
-    // Ako ne postoje stats, napravi ih
-    if (!stats) {
-      const { data: newStats } = await supabase
-        .from('user_stats')
-        .insert({ user_id: userId })
-        .select()
-        .single();
+    if (stats) return stats as UserStats;
 
-      return newStats as UserStats;
-    }
+    const { data: newStats } = await supabase
+      .from('user_stats')
+      .insert({ user_id: userId })
+      .select()
+      .single();
 
-    return stats as UserStats;
+    return (newStats as UserStats) ?? this.emptyStats(userId);
   }
 
   async trackRepoView(userId: string, repoData: any): Promise<void> {
@@ -240,6 +250,7 @@ export class DashboardService {
   // STREAK LOGIKA
   // ============================================
   private async updateStreak(userId: string, stats: UserStats): Promise<void> {
+    if (!stats?.user_id) return;
     const supabase = this.supabaseService.getdb();
     const today = new Date().toISOString().split('T')[0];
     const lastActive = stats.last_active_date;
