@@ -1,4 +1,4 @@
-import { Controller, Get, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Query, Request, UseGuards } from '@nestjs/common';
 import { GithubService } from './github.service';
 import { AuthGuard } from '../auth/auth.guard';
 
@@ -21,5 +21,11 @@ export class GithubController {
     @Query('level') level: string,
   ) {
     return this.githubService.getRecommendations(language, level);
+  }
+
+  @Get('recommendations/personalized')
+  @UseGuards(AuthGuard)
+  async getPersonalized(@Request() req) {
+    return this.githubService.getPersonalizedRecommendations(req.user.id);
   }
 }
