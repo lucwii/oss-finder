@@ -78,7 +78,8 @@ export function DashboardNavbar({ user, streak, onSignOut }: DashboardNavbarProp
 
           {/* Logo */}
           <Link href="/dashboard" className="flex items-center flex-shrink-0">
-            <img src="/logo.svg" alt="Mergly" style={{ height: '28px', width: 'auto' }} />
+            <img src="/logo.svg" alt="Mergly" className="hidden sm:block" style={{ height: '28px', width: 'auto' }} />
+            <img src="/icon-white.svg" alt="Mergly" className="block sm:hidden" style={{ height: '28px', width: 'auto' }} />
           </Link>
 
           {/* Nav items — desktop */}

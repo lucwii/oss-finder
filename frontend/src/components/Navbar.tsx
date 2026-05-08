@@ -30,7 +30,8 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
         <Link href="/">
-          <img src="/logo.svg" alt="Mergly" style={{ height: '28px', width: 'auto' }} />
+          <img src="/logo.svg" alt="Mergly" className="hidden sm:block" style={{ height: '28px', width: 'auto' }} />
+          <img src="/icon-green.svg" alt="Mergly" className="block sm:hidden" style={{ height: '28px', width: 'auto' }} />
         </Link>
 
         {/* Nav links */}

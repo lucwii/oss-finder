@@ -19,6 +19,9 @@ export const metadata: Metadata = {
   title: "Mergly — Find Your First Open Source Contribution",
   description:
     "Stop scrolling through thousands of repositories. Get matched with projects that fit your skills and start contributing today.",
+  icons: {
+    icon: "/icon-green.svg",
+  },
 };
 
 export default function RootLayout({
