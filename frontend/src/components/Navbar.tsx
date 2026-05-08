@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Terminal, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -29,14 +29,9 @@ export default function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-lg flex items-center justify-center">
-            <Terminal className="w-4 h-4 text-[#22c55e]" strokeWidth={2} />
-          </div>
-          <span className="font-semibold text-white tracking-tight text-[15px]">
-            ContribFinder
-          </span>
-        </div>
+        <Link href="/">
+          <img src="/logo.svg" alt="Mergly" style={{ height: '28px', width: 'auto' }} />
+        </Link>
 
         {/* Nav links */}
         <div className="hidden md:flex items-center gap-8">

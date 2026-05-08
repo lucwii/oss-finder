@@ -119,7 +119,7 @@ export default function RegisterPage() {
             className="inline-flex items-center gap-2 px-3 py-1.5 bg-[#22c55e]/10 border border-[#22c55e]/20 rounded-full mb-6"
             style={{ animation: 'fadeSlideUp 0.45s ease both', animationDelay: '40ms' }}
           >
-            <span className="text-[#22c55e] text-xs font-medium tracking-wide">✦ Join ContribFinder</span>
+            <span className="text-[#22c55e] text-xs font-medium tracking-wide">✦ Join Mergly</span>
           </div>
 
           <h1

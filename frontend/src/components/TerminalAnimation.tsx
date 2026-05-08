@@ -73,7 +73,7 @@ export default function TerminalAnimation() {
           <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
           <span className="w-3 h-3 rounded-full bg-[#28c840]" />
           <span className="ml-3 text-xs text-[#52525b] font-mono">
-            contribfinder ~ bash
+            mergly ~ bash
           </span>
         </div>
 

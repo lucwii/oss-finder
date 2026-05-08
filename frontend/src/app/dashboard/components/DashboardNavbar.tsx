@@ -12,7 +12,6 @@ import {
   Settings,
   Trophy,
   User,
-  Zap,
 } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
 
@@ -78,19 +77,8 @@ export function DashboardNavbar({ user, streak, onSignOut }: DashboardNavbarProp
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
 
           {/* Logo */}
-          <Link href="/dashboard" className="flex items-center gap-2.5 flex-shrink-0">
-            <div
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{
-                background: 'rgba(34,197,94,0.15)',
-                border: '1px solid rgba(34,197,94,0.3)',
-              }}
-            >
-              <Zap size={16} style={{ color: '#22c55e' }} />
-            </div>
-            <span className="font-bold text-white text-sm tracking-tight hidden sm:block">
-              ContribFinder
-            </span>
+          <Link href="/dashboard" className="flex items-center flex-shrink-0">
+            <img src="/logo.svg" alt="Mergly" style={{ height: '28px', width: 'auto' }} />
           </Link>
 
           {/* Nav items — desktop */}

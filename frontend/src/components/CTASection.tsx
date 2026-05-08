@@ -46,7 +46,7 @@ export default function CTASection() {
         </h2>
 
         <p className="text-[#a1a1aa] text-lg max-w-md">
-          Join developers who found their open source home with ContribFinder.
+          Join developers who found their open source home with Mergly.
         </p>
 
         <button className="btn-glow group flex items-center gap-2.5 bg-[#22c55e] hover:bg-[#16a34a] text-black font-semibold px-8 py-4 rounded-xl text-lg transition-all duration-200 hover:scale-[1.02]">

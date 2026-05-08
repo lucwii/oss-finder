@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Terminal } from 'lucide-react';
 
 const LINES: { text: string; color: string }[] = [
   { text: '> Scanning 47,832 repositories...', color: '#a1a1aa' },
@@ -73,13 +72,10 @@ export default function AuthLeftPanel() {
       <div className="relative z-10 flex flex-col h-full justify-center px-12 py-12">
         {/* Logo */}
         <div className="mb-12">
-          <Link href="/" className="inline-flex items-center gap-3 mb-2 group">
-            <div className="w-10 h-10 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-xl flex items-center justify-center group-hover:bg-[#22c55e]/15 transition-colors">
-              <Terminal className="w-5 h-5 text-[#22c55e]" strokeWidth={2} />
-            </div>
-            <span className="text-2xl font-bold text-white tracking-tight">ContribFinder</span>
+          <Link href="/" className="inline-flex mb-2">
+            <img src="/logo.svg" alt="Mergly" style={{ height: '36px', width: 'auto' }} />
           </Link>
-          <p className="text-[#3f3f46] text-sm ml-[52px]">Find your first open source contribution.</p>
+          <p className="text-[#3f3f46] text-sm">Find your first open source contribution.</p>
         </div>
 
         {/* Terminal window */}
@@ -90,7 +86,7 @@ export default function AuthLeftPanel() {
             <div className="w-3 h-3 rounded-full bg-[#febc2e]" />
             <div className="w-3 h-3 rounded-full bg-[#28c840]" />
             <span className="ml-3 text-xs text-[#3f3f46] font-mono tracking-wide">
-              contrib-finder — terminal
+              mergly — terminal
             </span>
           </div>
 
