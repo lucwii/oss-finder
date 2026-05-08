@@ -87,7 +87,6 @@ export default function DashboardPage() {
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
-    trackIssueClick();
   };
 
   const toggleBookmark = (id: number) => {
@@ -189,6 +188,7 @@ export default function DashboardPage() {
                     bookmarked={bookmarked.has(featured.repo.id)}
                     onBookmark={toggleBookmark}
                     onRepoClick={(rec) => trackRepoView(rec.repo)}
+                    onIssueClick={trackIssueClick}
                   />
                 </div>
               )}
@@ -204,6 +204,7 @@ export default function DashboardPage() {
                       bookmarked={bookmarked.has(rec.repo.id)}
                       onBookmark={toggleBookmark}
                       onRepoClick={(rec) => trackRepoView(rec.repo)}
+                      onIssueClick={trackIssueClick}
                       animationDelay={`${0.6 + i * 0.08}s`}
                     />
                   ))}

@@ -11,9 +11,10 @@ interface FeaturedCardProps {
   bookmarked: boolean;
   onBookmark: (id: number) => void;
   onRepoClick?: (rec: Recommendation) => void;
+  onIssueClick?: () => void;
 }
 
-export function FeaturedCard({ rec, bookmarked, onBookmark, onRepoClick }: FeaturedCardProps) {
+export function FeaturedCard({ rec, bookmarked, onBookmark, onRepoClick, onIssueClick }: FeaturedCardProps) {
   const [bookmarkPop, setBookmarkPop] = useState(false);
   const lang = getLanguageBadge(rec.repo.language);
   const [owner, repoName] = rec.repo.full_name.split('/');
@@ -114,6 +115,7 @@ export function FeaturedCard({ rec, bookmarked, onBookmark, onRepoClick }: Featu
                       href={issue.html_url}
                       target="_blank"
                       rel="noopener noreferrer"
+                      onClick={() => onIssueClick?.()}
                       className="flex items-center justify-between gap-3 p-3 rounded-xl transition-colors duration-150 cursor-pointer"
                       style={{
                         background: '#1a1a1a',

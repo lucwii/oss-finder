@@ -12,6 +12,7 @@ interface RepoCardProps {
   bookmarked: boolean;
   onBookmark: (id: number) => void;
   onRepoClick?: (rec: Recommendation) => void;
+  onIssueClick?: () => void;
   animationDelay?: string;
 }
 
@@ -22,6 +23,7 @@ export function RepoCard({
   bookmarked,
   onBookmark,
   onRepoClick,
+  onIssueClick,
   animationDelay = '0s',
 }: RepoCardProps) {
   const [hovered, setHovered] = useState(false);
@@ -161,6 +163,7 @@ export function RepoCard({
                   href={issue.html_url}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={() => onIssueClick?.()}
                   className="flex items-center justify-between gap-2 p-2.5 rounded-lg transition-colors duration-100 cursor-pointer"
                   style={{
                     background: '#1a1a1a',

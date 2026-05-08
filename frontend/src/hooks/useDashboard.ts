@@ -174,6 +174,15 @@ export function useDashboard() {
   }
 
   async function trackIssueClick() {
+    setState((prev) => {
+      const newState = {
+        ...prev,
+        stats: { ...prev.stats, issues_clicked: prev.stats.issues_clicked + 1 },
+      };
+      if (userIdRef.current) writeCache(userIdRef.current, newState);
+      return newState;
+    });
+
     const {
       data: { session },
     } = await supabase.auth.getSession();
