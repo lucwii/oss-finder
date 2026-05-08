@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  
+  <svg x="78.9090909090909" y="30" width="58.18181818181818" height="40" viewBox="0 0 160 110" preserveAspectRatio="xMidYMid meet">
+    
+    <g fill="none" stroke="#22c55e" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M16 16 L76 55" stroke-width="9"></path>
+      <path d="M16 94 L76 55" stroke-width="9"></path>
+      <path d="M76 55 L140 55" stroke-width="12"></path>
+      <path d="M128 43 L140 55 L128 67" stroke-width="12"></path>
+    </g>
+    <circle cx="76" cy="55" r="16" fill="#22c55e"></circle>
+  </svg>
+  <text x="153.0909090909091" y="50" font-family="Inter, &#39;Inter Display&#39;, system-ui, -apple-system, &#39;Segoe UI&#39;, sans-serif" font-weight="600" font-size="56" letter-spacing="-1.68" fill="#ffffff" dominant-baseline="central">mergly</text>
+</svg>
