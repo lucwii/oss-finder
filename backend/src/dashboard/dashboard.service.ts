@@ -166,7 +166,6 @@ export class DashboardService {
   async trackRepoView(userId: string, repoData: any): Promise<void> {
     const supabase = this.supabaseService.getdb();
 
-    // Dodaj u recently viewed
     await supabase
       .from('recently_viewed')
       .upsert({
@@ -176,13 +175,14 @@ export class DashboardService {
         viewed_at: new Date().toISOString(),
       });
 
-    // Inkrementiraj repos_viewed
-    await supabase.rpc('increment_repos_viewed', { p_user_id: userId });
+    const { error } = await supabase.rpc('increment_repos_viewed', { p_user_id: userId });
+    if (error) this.logger.error('increment_repos_viewed failed', error.message);
   }
 
   async trackIssueClick(userId: string): Promise<void> {
     const supabase = this.supabaseService.getdb();
-    await supabase.rpc('increment_issues_clicked', { p_user_id: userId });
+    const { error } = await supabase.rpc('increment_issues_clicked', { p_user_id: userId });
+    if (error) this.logger.error('increment_issues_clicked failed', error.message);
   }
 
   // ============================================
