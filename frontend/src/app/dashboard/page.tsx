@@ -99,7 +99,6 @@ export default function DashboardPage() {
         const rec = recommendations.find((r) => r.repo.id === id);
         if (rec) {
           setToast(`Saved ${rec.repo.name} for later!`);
-          trackRepoView(rec.repo);
         }
       }
       return next;
