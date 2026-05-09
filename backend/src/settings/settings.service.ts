@@ -27,6 +27,46 @@ export class SettingsService {
     };
   }
 
+  async getFullProfile(userId: string) {
+    const profile = await this.getProfile(userId);
+    const supabase = this.supabaseService.getdb();
+
+    const { data: stats } = await supabase
+      .from('user_stats')
+      .select('repos_viewed, issues_clicked, days_streak, max_streak, languages_explored, last_active_date')
+      .eq('user_id', userId)
+      .single();
+
+    const { data: achievements } = await supabase
+      .from('user_achievements')
+      .select('achievement_id')
+      .eq('user_id', userId);
+
+    return {
+      ...profile,
+      stats: {
+        repos_viewed: stats?.repos_viewed ?? 0,
+        issues_clicked: stats?.issues_clicked ?? 0,
+        days_streak: stats?.days_streak ?? 0,
+        max_streak: stats?.max_streak ?? 0,
+        languages_explored: stats?.languages_explored ?? [],
+        achievements: achievements?.map((a: { achievement_id: string }) => a.achievement_id) ?? [],
+        last_active_date: stats?.last_active_date ?? null,
+      },
+    };
+  }
+
+  async getActivity(userId: string) {
+    const supabase = this.supabaseService.getdb();
+
+    const { data, error } = await supabase
+      .rpc('get_user_activity', { p_user_id: userId });
+
+    if (error) throw new BadRequestException(error.message);
+
+    return data ?? [];
+  }
+
   async updateProfile(userId: string, data: UpdateProfileDto) {
     if (data.languages !== undefined && data.languages.length === 0) {
       throw new BadRequestException('At least one language must be selected');

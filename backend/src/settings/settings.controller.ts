@@ -13,6 +13,16 @@ export class SettingsController {
     return this.settingsService.getProfile(req.user.id);
   }
 
+  @Get('profile/full')
+  async getFullProfile(@Request() req: { user: { id: string } }) {
+    return this.settingsService.getFullProfile(req.user.id);
+  }
+
+  @Get('activity')
+  async getActivity(@Request() req: { user: { id: string } }) {
+    return this.settingsService.getActivity(req.user.id);
+  }
+
   @Patch('profile')
   async updateProfile(
     @Request() req: { user: { id: string } },
