@@ -147,16 +147,29 @@ export function useDashboard() {
     load();
   }, []);
 
-  async function trackRepoView(repoData: any) {
-    // Optimistic update — increment counter immediately in UI and cache
+  async function refreshStatsAndAchievements(token: string) {
+    const res = await fetch(`${API_BASE}/dashboard`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return;
+    const data = await res.json();
     setState((prev) => {
       const newState = {
         ...prev,
-        stats: { ...prev.stats, repos_viewed: prev.stats.repos_viewed + 1 },
+        stats: data.stats ?? prev.stats,
+        achievements: data.achievements ?? prev.achievements,
       };
       if (userIdRef.current) writeCache(userIdRef.current, newState);
       return newState;
     });
+  }
+
+  async function trackRepoView(repoData: any) {
+    // Optimistic update — increment counter immediately in UI
+    setState((prev) => ({
+      ...prev,
+      stats: { ...prev.stats, repos_viewed: prev.stats.repos_viewed + 1 },
+    }));
 
     const {
       data: { session },
@@ -171,17 +184,15 @@ export function useDashboard() {
       },
       body: JSON.stringify({ repoData }),
     });
+
+    await refreshStatsAndAchievements(session.access_token);
   }
 
   async function trackIssueClick() {
-    setState((prev) => {
-      const newState = {
-        ...prev,
-        stats: { ...prev.stats, issues_clicked: prev.stats.issues_clicked + 1 },
-      };
-      if (userIdRef.current) writeCache(userIdRef.current, newState);
-      return newState;
-    });
+    setState((prev) => ({
+      ...prev,
+      stats: { ...prev.stats, issues_clicked: prev.stats.issues_clicked + 1 },
+    }));
 
     const {
       data: { session },
@@ -192,6 +203,8 @@ export function useDashboard() {
       method: 'POST',
       headers: { Authorization: `Bearer ${session.access_token}` },
     });
+
+    await refreshStatsAndAchievements(session.access_token);
   }
 
   return { ...state, trackRepoView, trackIssueClick };

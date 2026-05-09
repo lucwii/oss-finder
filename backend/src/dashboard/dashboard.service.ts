@@ -35,7 +35,12 @@ export class DashboardService {
       this.getRecentlyViewed(userId).catch(() => []),
     ]);
 
-    const achievements = this.calculateAchievements(stats);
+    const achievements = await this.syncAchievements(userId, stats).catch(() =>
+      this.ACHIEVEMENT_DEFINITIONS.map((d) => ({
+        ...d,
+        unlocked: d.check(stats),
+      })),
+    );
 
     this.updateStreak(userId, stats).catch(() => {});
 
@@ -54,8 +59,10 @@ export class DashboardService {
       repos_viewed: 0,
       issues_clicked: 0,
       days_streak: 0,
+      max_streak: 0,
       last_active_date: '',
       achievements: [],
+      languages_explored: [],
     };
   }
 
@@ -175,7 +182,11 @@ export class DashboardService {
         viewed_at: new Date().toISOString(),
       });
 
-    const { error } = await supabase.rpc('increment_repos_viewed', { p_user_id: userId });
+    const language: string = repoData?.language ?? '';
+    const { error } = await supabase.rpc('increment_repos_viewed', {
+      p_user_id: userId,
+      p_language: language,
+    });
     if (error) this.logger.error('increment_repos_viewed failed', error.message);
   }
 
@@ -204,46 +215,119 @@ export class DashboardService {
   // ============================================
   // ACHIEVEMENTS
   // ============================================
-  private calculateAchievements(stats: UserStats): Achievement[] {
-    const allAchievements = [
-      {
-        id: 'first_look',
-        name: 'First Look',
-        description: 'Viewed your first repository',
-        icon: '🌱',
-        unlocked: stats.repos_viewed >= 1,
-      },
-      {
-        id: 'explorer',
-        name: 'Explorer',
-        description: 'Viewed 10 repositories',
-        icon: '🔍',
-        unlocked: stats.repos_viewed >= 10,
-      },
-      {
-        id: 'committed',
-        name: 'Committed',
-        description: '7 day streak',
-        icon: '⭐',
-        unlocked: stats.days_streak >= 7,
-      },
-      {
-        id: 'issue_hunter',
-        name: 'Issue Hunter',
-        description: 'Clicked on 5 issues',
-        icon: '🎯',
-        unlocked: stats.issues_clicked >= 5,
-      },
-      {
-        id: 'contributor',
-        name: 'Contributor',
-        description: 'Clicked on 20 issues',
-        icon: '🚀',
-        unlocked: stats.issues_clicked >= 20,
-      },
-    ];
+  private readonly ACHIEVEMENT_DEFINITIONS = [
+    {
+      id: 'first_look',
+      name: 'First Look',
+      description: 'Viewed your first repository',
+      icon: '🌱',
+      check: (s: UserStats) => s.repos_viewed >= 1,
+    },
+    {
+      id: 'explorer',
+      name: 'Explorer',
+      description: 'Viewed 10 repositories',
+      icon: '🔍',
+      check: (s: UserStats) => s.repos_viewed >= 10,
+    },
+    {
+      id: 'deep_diver',
+      name: 'Deep Diver',
+      description: 'Viewed 50 repositories',
+      icon: '🌊',
+      check: (s: UserStats) => s.repos_viewed >= 50,
+    },
+    {
+      id: 'repo_veteran',
+      name: 'Repo Veteran',
+      description: 'Viewed 100 repositories',
+      icon: '🏛️',
+      check: (s: UserStats) => s.repos_viewed >= 100,
+    },
+    {
+      id: 'issue_hunter',
+      name: 'Issue Hunter',
+      description: 'Clicked on 5 issues',
+      icon: '🎯',
+      check: (s: UserStats) => s.issues_clicked >= 5,
+    },
+    {
+      id: 'bug_slayer',
+      name: 'Bug Slayer',
+      description: 'Clicked on 50 issues',
+      icon: '🐛',
+      check: (s: UserStats) => s.issues_clicked >= 50,
+    },
+    {
+      id: 'committed',
+      name: 'Committed',
+      description: 'Maintain a 7 day streak',
+      icon: '🔥',
+      check: (s: UserStats) => s.max_streak >= 7,
+    },
+    {
+      id: 'dedicated',
+      name: 'Dedicated',
+      description: 'Maintain a 30 day streak',
+      icon: '💎',
+      check: (s: UserStats) => s.max_streak >= 30,
+    },
+    {
+      id: 'polyglot',
+      name: 'Polyglot',
+      description: 'Explore repos in 5 different languages',
+      icon: '🌍',
+      check: (s: UserStats) => (s.languages_explored ?? []).length >= 5,
+    },
+    {
+      id: 'stack_master',
+      name: 'Stack Master',
+      description: 'Explore repos in 10 different languages',
+      icon: '🔧',
+      check: (s: UserStats) => (s.languages_explored ?? []).length >= 10,
+    },
+  ];
 
-    return allAchievements;
+  private async syncAchievements(userId: string, stats: UserStats): Promise<Achievement[]> {
+    const supabase = this.supabaseService.getdb();
+
+    const { data: existing } = await supabase
+      .from('user_achievements')
+      .select('achievement_id, unlocked_at')
+      .eq('user_id', userId);
+
+    const existingMap = new Map(
+      (existing ?? []).map((r) => [r.achievement_id, r.unlocked_at as string]),
+    );
+
+    const toInsert: { user_id: string; achievement_id: string }[] = [];
+
+    const achievements: Achievement[] = this.ACHIEVEMENT_DEFINITIONS.map((def) => {
+      const shouldBeUnlocked = def.check(stats);
+      const alreadyUnlocked = existingMap.has(def.id);
+
+      if (shouldBeUnlocked && !alreadyUnlocked) {
+        toInsert.push({ user_id: userId, achievement_id: def.id });
+      }
+
+      return {
+        id: def.id,
+        name: def.name,
+        description: def.description,
+        icon: def.icon,
+        unlocked: shouldBeUnlocked,
+        unlocked_at: existingMap.get(def.id),
+      };
+    });
+
+    if (toInsert.length > 0) {
+      const { error } = await supabase
+        .from('user_achievements')
+        .insert(toInsert);
+      if (error) this.logger.error('Failed to insert achievements', error.message);
+    }
+
+    return achievements;
   }
 
   // ============================================
@@ -272,6 +356,7 @@ export class DashboardService {
       .from('user_stats')
       .update({
         days_streak: newStreak,
+        max_streak: Math.max(stats.max_streak ?? 0, newStreak),
         last_active_date: today,
         updated_at: new Date().toISOString(),
       })

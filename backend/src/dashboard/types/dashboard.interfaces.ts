@@ -25,8 +25,10 @@ export interface UserStats {
   repos_viewed: number;
   issues_clicked: number;
   days_streak: number;
+  max_streak: number;
   last_active_date: string;
   achievements: string[];
+  languages_explored: string[];
 }
 
 export interface Achievement {
@@ -35,6 +37,7 @@ export interface Achievement {
   description: string;
   icon: string;
   unlocked: boolean;
+  unlocked_at?: string;
 }
 
 export interface DashboardData {
