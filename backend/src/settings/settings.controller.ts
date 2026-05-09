@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Patch, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { SettingsService } from './settings.service';
-import { UpdatePasswordDto, UpdateProfileDto } from './types/settings.interfaces';
+import type { UpdatePasswordDto, UpdateProfileDto } from './types/settings.interfaces';
 
 @Controller('settings')
 @UseGuards(AuthGuard)
