@@ -6,6 +6,7 @@ import { SupabaseModule } from './supabase/supabase.module';
 import { ConfigModule } from '@nestjs/config';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { SettingsModule } from './settings/settings.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
     GithubModule,
     OnboardingModule,
     DashboardModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
