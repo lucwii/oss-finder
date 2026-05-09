@@ -182,6 +182,15 @@ export class DashboardService {
         viewed_at: new Date().toISOString(),
       });
 
+    // Log every visit separately for the activity graph
+    await supabase
+      .from('repo_activity_log')
+      .insert({
+        user_id: userId,
+        repo_id: repoData.id,
+        viewed_at: new Date().toISOString(),
+      });
+
     const language: string = repoData?.language ?? '';
     const { error } = await supabase.rpc('increment_repos_viewed', {
       p_user_id: userId,
