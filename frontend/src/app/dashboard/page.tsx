@@ -1,10 +1,25 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clock } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { useDashboard } from '@/hooks/useDashboard';
+import { supabase } from '@/lib/supabase';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+
+async function authFetch(url: string, options: RequestInit = {}) {
+  const { data: { session } } = await supabase.auth.getSession();
+  return fetch(`${API_BASE}${url}`, {
+    ...options,
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${session?.access_token}`,
+      ...options.headers,
+    },
+  });
+}
 import { DashboardNavbar } from './components/DashboardNavbar';
 import { HeroHeader } from './components/HeroHeader';
 import { FilterPills } from './components/FilterPills';
@@ -78,6 +93,31 @@ export default function DashboardPage() {
     if (!authLoading && !user) router.push('/login');
   }, [authLoading, user, router]);
 
+  // Load saved status for each recommendation
+  useEffect(() => {
+    if (!user || recommendations.length === 0) return;
+    const checkAll = async () => {
+      const results = await Promise.all(
+        recommendations.map(async (rec) => {
+          try {
+            const res = await authFetch(`/saved/check/${rec.repo.id}`);
+            if (!res.ok) return null;
+            const data = await res.json();
+            return data.saved ? rec.repo.id : null;
+          } catch {
+            return null;
+          }
+        }),
+      );
+      const savedIds = results.filter(Boolean) as number[];
+      if (savedIds.length > 0) {
+        setBookmarked(new Set(savedIds));
+      }
+    };
+    checkAll();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, recommendations.length]);
+
   const filtered = filterRecs(recommendations, activeFilter);
   const [featured, ...rest] = filtered;
 
@@ -89,21 +129,52 @@ export default function DashboardPage() {
     });
   };
 
-  const toggleBookmark = (id: number) => {
+  const toggleBookmark = useCallback(async (id: number) => {
+    const alreadySaved = bookmarked.has(id);
+
+    // Optimistic update
     setBookmarked((prev) => {
       const next = new Set(prev);
-      if (next.has(id)) {
-        next.delete(id);
-      } else {
-        next.add(id);
-        const rec = recommendations.find((r) => r.repo.id === id);
-        if (rec) {
-          setToast(`Saved ${rec.repo.name} for later!`);
-        }
-      }
+      alreadySaved ? next.delete(id) : next.add(id);
       return next;
     });
-  };
+
+    const rec = recommendations.find((r) => r.repo.id === id);
+
+    try {
+      if (alreadySaved) {
+        await authFetch(`/saved/${id}`, { method: 'DELETE' });
+      } else {
+        if (!rec) return;
+        await authFetch('/saved', {
+          method: 'POST',
+          body: JSON.stringify({
+            repo_id: rec.repo.id,
+            repo_data: {
+              id: rec.repo.id,
+              name: rec.repo.name,
+              full_name: rec.repo.full_name,
+              description: rec.repo.description,
+              html_url: rec.repo.html_url,
+              stargazers_count: rec.repo.stargazers_count,
+              open_issues_count: rec.repo.open_issues_count,
+              language: rec.repo.language,
+              topics: rec.repo.topics,
+            },
+          }),
+        });
+        setToast(`Saved ${rec.repo.name} for later!`);
+      }
+    } catch {
+      // Revert on error
+      setBookmarked((prev) => {
+        const next = new Set(prev);
+        alreadySaved ? next.add(id) : next.delete(id);
+        return next;
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [bookmarked, recommendations]);
 
   if (authLoading || !user) return null;
 
