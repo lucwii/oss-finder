@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   CheckCircle,
   ChevronDown,
@@ -62,8 +62,6 @@ const STATUS_CONFIG = [
   },
 ];
 
-// ─── Format date ──────────────────────────────────────────────────────────────
-
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'long',
@@ -93,18 +91,27 @@ export function SavedRepoCard({
   onMoveToCollection,
   onRemove,
 }: SavedRepoCardProps) {
-  const [hovered, setHovered]             = useState(false);
-  const [issuesOpen, setIssuesOpen]       = useState(false);
+  const [hovered, setHovered]               = useState(false);
+  const [issuesOpen, setIssuesOpen]         = useState(false);
   const [collectionOpen, setCollectionOpen] = useState(false);
-  const dropdownRef                       = useRef<HTMLDivElement>(null);
+  const collectionRef                       = useRef<HTMLDivElement>(null);
 
   const data = repo.repo_data ?? {};
   const [owner, repoName] = (data.full_name ?? '/').split('/');
   const lang = getLangBadge(data.language);
   const customCollections = collections.filter((c) => !c.isDefault);
 
-  // Close dropdown on outside click
-  const handleCollectionToggle = () => setCollectionOpen((v) => !v);
+  // Close collection dropdown when clicking outside
+  useEffect(() => {
+    if (!collectionOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (collectionRef.current && !collectionRef.current.contains(e.target as Node)) {
+        setCollectionOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [collectionOpen]);
 
   return (
     <div
@@ -115,20 +122,19 @@ export function SavedRepoCard({
         border: `1px solid ${hovered ? '#3f3f46' : '#27272a'}`,
         borderRadius: '12px',
         transform: hovered ? 'translateY(-1px)' : 'translateY(0)',
-        transition: 'border-color 0.15s, transform 0.15s, opacity 0.3s, max-height 0.3s',
+        transition: 'border-color 0.15s, transform 0.15s, opacity 0.3s',
         opacity: isRemoving ? 0 : 1,
-        maxHeight: isRemoving ? '0' : '1000px',
-        overflow: 'hidden',
-        marginBottom: isRemoving ? '0' : undefined,
+        overflow: isRemoving ? 'hidden' : undefined,
+        maxHeight: isRemoving ? '0' : undefined,
       }}
     >
       <div className="p-5">
-        {/* Top row: language badge + repo name + stars */}
+        {/* Top row */}
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex items-center gap-2 min-w-0 flex-1">
             {data.language && (
               <span
-                className="px-2 py-0.5 rounded-full text-xs font-semibold flex-shrink-0"
+                className="px-2 py-0.5 rounded-full text-xs font-semibold shrink-0"
                 style={{ background: lang.bg, color: lang.text }}
               >
                 {data.language}
@@ -139,7 +145,7 @@ export function SavedRepoCard({
               <span style={{ color: '#ffffff', fontWeight: 700 }}>{repoName}</span>
             </span>
           </div>
-          <div className="flex items-center gap-1 flex-shrink-0 text-xs" style={{ color: '#52525b' }}>
+          <div className="flex items-center gap-1 shrink-0 text-xs" style={{ color: '#52525b' }}>
             <Star size={11} style={{ color: '#eab308' }} />
             <span>{(data.stargazers_count ?? 0).toLocaleString()}</span>
           </div>
@@ -177,7 +183,7 @@ export function SavedRepoCard({
         )}
 
         {/* Status pills */}
-        <div className="flex flex-wrap gap-1.5 mb-3">
+        <div className="flex flex-wrap gap-1.5 mb-4">
           {STATUS_CONFIG.map((s) => {
             const active = repo.status === s.value;
             return (
@@ -190,18 +196,8 @@ export function SavedRepoCard({
                   border: `1px solid ${active ? s.activeBorder : '#27272a'}`,
                   color: active ? s.activeColor : '#a1a1aa',
                 }}
-                onMouseEnter={(e) => {
-                  if (!active) {
-                    e.currentTarget.style.background = '#222222';
-                    e.currentTarget.style.color = '#ffffff';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!active) {
-                    e.currentTarget.style.background = '#1a1a1a';
-                    e.currentTarget.style.color = '#a1a1aa';
-                  }
-                }}
+                onMouseEnter={(e) => { if (!active) { e.currentTarget.style.background = '#222222'; e.currentTarget.style.color = '#ffffff'; } }}
+                onMouseLeave={(e) => { if (!active) { e.currentTarget.style.background = '#1a1a1a'; e.currentTarget.style.color = '#a1a1aa'; } }}
               >
                 {s.icon}
                 {s.label}
@@ -210,41 +206,54 @@ export function SavedRepoCard({
           })}
         </div>
 
-        {/* Collection + issues row */}
-        <div className="flex items-center justify-between gap-3 mb-3">
+        {/* Collection picker + saved date */}
+        <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
           {/* Collection dropdown */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative" ref={collectionRef}>
             <button
-              onClick={handleCollectionToggle}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs cursor-pointer transition-all duration-150"
+              onClick={() => setCollectionOpen((v) => !v)}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs cursor-pointer transition-all duration-150"
               style={{
-                background: '#1a1a1a',
-                border: '1px solid #27272a',
-                color: '#a1a1aa',
+                background: collectionOpen ? '#1f1f1f' : '#1a1a1a',
+                border: `1px solid ${collectionOpen ? '#3f3f46' : '#27272a'}`,
+                color: collectionOpen ? '#ffffff' : '#a1a1aa',
               }}
               onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#3f3f46'; e.currentTarget.style.color = '#ffffff'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.borderColor = '#27272a'; e.currentTarget.style.color = '#a1a1aa'; }}
+              onMouseLeave={(e) => {
+                if (!collectionOpen) {
+                  e.currentTarget.style.borderColor = '#27272a';
+                  e.currentTarget.style.color = '#a1a1aa';
+                }
+              }}
             >
               <Folder size={11} />
               <span className="max-w-[120px] truncate">
                 {repo.collection_name ?? 'No collection'}
               </span>
-              <ChevronDown size={10} style={{ transition: 'transform 0.15s', transform: collectionOpen ? 'rotate(180deg)' : 'none' }} />
+              <ChevronDown
+                size={10}
+                style={{
+                  transition: 'transform 0.15s',
+                  transform: collectionOpen ? 'rotate(180deg)' : 'none',
+                  flexShrink: 0,
+                }}
+              />
             </button>
 
             {collectionOpen && (
               <div
-                className="absolute left-0 z-20 rounded-xl overflow-hidden"
+                className="absolute left-0 z-30 rounded-xl overflow-hidden"
                 style={{
                   top: 'calc(100% + 4px)',
                   background: '#111111',
                   border: '1px solid #27272a',
-                  boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-                  minWidth: '160px',
+                  boxShadow: '0 8px 24px rgba(0,0,0,0.6)',
+                  minWidth: '170px',
                   animation: 'fadeIn 0.12s ease forwards',
                 }}
               >
                 <div className="p-1">
+                  {/* No collection option */}
                   <button
                     onClick={() => { onMoveToCollection(repo.repo_id, null, null); setCollectionOpen(false); }}
                     className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs cursor-pointer transition-colors duration-100 text-left"
@@ -252,9 +261,19 @@ export function SavedRepoCard({
                     onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                   >
-                    <GitBranch size={11} />
-                    No collection
+                    <GitBranch size={11} style={{ flexShrink: 0 }} />
+                    <span>No collection</span>
+                    {!repo.collection_id && (
+                      <span className="ml-auto text-xs" style={{ color: '#22c55e' }}>✓</span>
+                    )}
                   </button>
+
+                  {/* Custom collections */}
+                  {customCollections.length === 0 && (
+                    <p className="px-3 py-2 text-xs" style={{ color: '#3f3f46' }}>
+                      No collections yet
+                    </p>
+                  )}
                   {customCollections.map((c) => (
                     <button
                       key={c.id}
@@ -264,8 +283,11 @@ export function SavedRepoCard({
                       onMouseEnter={(e) => { e.currentTarget.style.background = '#1a1a1a'; }}
                       onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; }}
                     >
-                      <Folder size={11} />
-                      <span className="truncate">{c.name}</span>
+                      <Folder size={11} style={{ flexShrink: 0 }} />
+                      <span className="truncate flex-1">{c.name}</span>
+                      {repo.collection_id === c.id && (
+                        <span className="ml-auto text-xs" style={{ color: '#22c55e' }}>✓</span>
+                      )}
                     </button>
                   ))}
                 </div>
@@ -274,7 +296,7 @@ export function SavedRepoCard({
           </div>
 
           {/* Saved date */}
-          <span className="text-xs" style={{ color: '#3f3f46' }}>
+          <span className="text-xs shrink-0" style={{ color: '#3f3f46' }}>
             Saved {formatDate(repo.saved_at)}
           </span>
         </div>
@@ -302,7 +324,7 @@ export function SavedRepoCard({
 
             <div
               style={{
-                maxHeight: issuesOpen ? '80px' : '0px',
+                maxHeight: issuesOpen ? '60px' : '0px',
                 overflow: 'hidden',
                 transition: 'max-height 0.3s ease',
               }}
