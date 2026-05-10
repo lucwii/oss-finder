@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import {
   BookOpen,
   CheckCircle,
-  ChevronRight,
   Folder,
   MoreHorizontal,
   Plus,
@@ -260,8 +259,11 @@ function CollectionItem({
   rightSlot?: React.ReactNode;
 }) {
   return (
-    <button
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onSelect(); }}
       className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-xl text-sm transition-all duration-100 cursor-pointer"
       style={{
         background: active ? '#1a1a1a' : 'transparent',
@@ -287,7 +289,7 @@ function CollectionItem({
           </span>
         )}
       </div>
-    </button>
+    </div>
   );
 }
 
