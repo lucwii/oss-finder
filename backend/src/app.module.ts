@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { OnboardingModule } from './onboarding/onboarding.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SettingsModule } from './settings/settings.module';
+import { SavedModule } from './saved/saved.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SettingsModule } from './settings/settings.module';
     OnboardingModule,
     DashboardModule,
     SettingsModule,
+    SavedModule,
   ],
   controllers: [AppController],
   providers: [AppService],
