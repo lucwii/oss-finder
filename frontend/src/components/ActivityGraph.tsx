@@ -153,20 +153,33 @@ export function ActivityGraph({ userId }: ActivityGraphProps) {
     (async () => {
       try {
         const res = await authFetch('/settings/activity');
-        const raw: ActivityDay[] = res.ok ? await res.json() : [];
+
+        if (!res.ok) {
+          const errBody = await res.json().catch(() => ({}));
+          console.error('[ActivityGraph] API error', res.status, errBody);
+          throw new Error(`API ${res.status}: ${errBody?.message ?? 'unknown error'}`);
+        }
+
+        const raw: ActivityDay[] = await res.json();
+        console.log('[ActivityGraph] raw response:', raw);
+
         const map: Record<string, number> = {};
         let total = 0;
         for (const row of raw) {
-          map[row.day] = row.repos_count;
-          total += row.repos_count;
+          // Supabase returns bigint as string in some drivers — coerce to number
+          const count = Number(row.repos_count);
+          map[row.day] = count;
+          total += count;
         }
+        console.log('[ActivityGraph] activity map:', map, 'total:', total);
+
         const grid = buildGrid(map);
         setWeeks(grid);
         setMonthLabels(getMonthLabels(grid));
         setTotalCount(total);
         setIsEmpty(total === 0);
-      } catch {
-        // Silently build empty grid on error
+      } catch (err) {
+        console.error('[ActivityGraph] failed to load:', err);
         const grid = buildGrid({});
         setWeeks(grid);
         setMonthLabels(getMonthLabels(grid));
