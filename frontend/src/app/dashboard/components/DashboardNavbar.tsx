@@ -23,7 +23,7 @@ interface DashboardNavbarProps {
 
 const NAV_ITEMS = [
   { label: 'Dashboard', href: '/dashboard', soon: false },
-  { label: 'Saved', href: '/saved', soon: true, icon: Bookmark },
+  { label: 'Saved', href: '/saved', soon: false, icon: Bookmark },
   { label: 'Activity', href: '/activity', soon: true, icon: Activity },
   { label: 'Leaderboard', href: '/leaderboard', soon: true, icon: Trophy },
 ];
