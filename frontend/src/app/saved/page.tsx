@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
+import { DashboardNavbar } from '@/app/dashboard/components/DashboardNavbar';
 import { useSaved } from './hooks/useSaved';
 import { CollectionSidebar } from './components/CollectionSidebar';
 import { SavedRepoCard } from './components/SavedRepoCard';
@@ -20,7 +21,7 @@ import { SkeletonRepoCards } from './components/SkeletonSaved';
 import { SavedToastContainer } from './components/SavedToast';
 
 export default function SavedPage() {
-  const { user, loading: authLoading } = useAuth();
+  const { user, loading: authLoading, signOut } = useAuth();
   const router = useRouter();
   const repoListRef = useRef<HTMLDivElement>(null);
 
@@ -96,50 +97,7 @@ export default function SavedPage() {
       `}</style>
 
       <div style={{ background: '#0a0a0a', minHeight: '100vh' }}>
-        {/* Top nav bar — reuses DashboardNavbar layout */}
-        <header
-          className="fixed top-0 left-0 right-0 z-40 transition-all duration-300"
-          style={{
-            background: 'rgba(10,10,10,0.92)',
-            backdropFilter: 'blur(20px)',
-            WebkitBackdropFilter: 'blur(20px)',
-            borderBottom: '1px solid #27272a',
-          }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between gap-4">
-            <Link href="/dashboard" className="flex items-center flex-shrink-0">
-              <img src="/logo.svg" alt="Mergly" className="hidden sm:block" style={{ height: '28px', width: 'auto' }} />
-              <img src="/icon-white.svg" alt="Mergly" className="block sm:hidden" style={{ height: '28px', width: 'auto' }} />
-            </Link>
-            <nav className="hidden md:flex items-center gap-1">
-              {[
-                { label: 'Dashboard', href: '/dashboard' },
-                { label: 'Saved', href: '/saved', active: true },
-                { label: 'Profile', href: '/profile' },
-                { label: 'Settings', href: '/settings' },
-              ].map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="px-4 py-1.5 rounded-full text-sm font-medium transition-all duration-200"
-                  style={{
-                    background: item.active ? '#22c55e' : 'transparent',
-                    color: item.active ? '#000000' : '#a1a1aa',
-                  }}
-                  onMouseEnter={(e) => { if (!item.active) e.currentTarget.style.color = '#ffffff'; }}
-                  onMouseLeave={(e) => { if (!item.active) e.currentTarget.style.color = '#a1a1aa'; }}
-                >
-                  {item.label}
-                </Link>
-              ))}
-            </nav>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-mono text-[#52525b] truncate max-w-[160px] hidden sm:block">
-                {user.email}
-              </span>
-            </div>
-          </div>
-        </header>
+        <DashboardNavbar user={user} streak={0} onSignOut={signOut} />
 
         {/* Page content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-24 pb-24">
