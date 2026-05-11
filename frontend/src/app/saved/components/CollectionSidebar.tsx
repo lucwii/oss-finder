@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   BookOpen,
   CheckCircle,
@@ -84,7 +84,8 @@ export function CollectionSidebar({
       {/* Invisible backdrop — clicking it closes any open menu */}
       {menuOpenId && (
         <div
-          className="fixed inset-0 z-20"
+          className="fixed inset-0"
+          style={{ zIndex: 9998 }}
           onClick={closeMenu}
         />
       )}
@@ -248,6 +249,16 @@ function CustomCollectionRow({
   onCancelDelete: () => void;
   onConfirmDelete: () => void;
 }) {
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0 });
+
+  useLayoutEffect(() => {
+    if (menuOpen && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setDropdownPos({ top: rect.bottom + 4, left: rect.right - 160 });
+    }
+  }, [menuOpen]);
+
   return (
     <div className="relative group">
       <div
@@ -284,10 +295,11 @@ function CustomCollectionRow({
           )}
         </button>
 
-        {/* "..." button — z-30 so it sits above the backdrop */}
+        {/* "..." button */}
         <button
+          ref={btnRef}
           onClick={(e) => { e.stopPropagation(); onMenuOpen(); }}
-          className="relative z-30 opacity-0 group-hover:opacity-100 p-1.5 mr-1 rounded-lg cursor-pointer transition-all duration-100 shrink-0"
+          className="opacity-0 group-hover:opacity-100 p-1.5 mr-1 rounded-lg cursor-pointer transition-all duration-100 shrink-0"
           style={{
             color: '#71717a',
             opacity: menuOpen ? 1 : undefined,
@@ -306,12 +318,15 @@ function CustomCollectionRow({
         </button>
       </div>
 
-      {/* Dropdown — z-30 so it sits above the backdrop */}
+      {/* Dropdown — fixed positioning avoids overflow:auto clipping */}
       {menuOpen && (
         <div
-          className="absolute right-0 z-30 rounded-xl overflow-hidden"
+          className="rounded-xl overflow-hidden"
           style={{
-            top: 'calc(100% + 2px)',
+            position: 'fixed',
+            top: dropdownPos.top,
+            left: dropdownPos.left,
+            zIndex: 9999,
             background: '#111111',
             border: '1px solid #27272a',
             boxShadow: '0 8px 32px rgba(0,0,0,0.7)',

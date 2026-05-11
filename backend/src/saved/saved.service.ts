@@ -226,6 +226,13 @@ export class SavedService {
   async deleteCollection(userId: string, collectionId: string): Promise<{ success: boolean }> {
     const supabase = this.supabaseService.getdb();
 
+    // Unassign all repos from this collection before deleting it
+    await supabase
+      .from('saved_repos')
+      .update({ collection_id: null })
+      .eq('user_id', userId)
+      .eq('collection_id', collectionId);
+
     const { error } = await supabase
       .from('collections')
       .delete()

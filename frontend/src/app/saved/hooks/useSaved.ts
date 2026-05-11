@@ -161,7 +161,10 @@ export function useSaved() {
   const deleteCollection = useCallback(async (collectionId: string) => {
     try {
       const res = await authFetch(`/saved/collections/${collectionId}`, { method: 'DELETE' });
-      if (!res.ok) throw new Error('Failed to delete collection');
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({}));
+        throw new Error(err.message ?? 'Failed to delete collection');
+      }
       setCollections((prev) => prev.filter((c) => c.id !== collectionId));
       if (activeCollection === collectionId) {
         setActiveCollection('all');
