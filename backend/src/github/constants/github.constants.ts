@@ -2,31 +2,31 @@ export const LEVEL_CONFIG = {
   1: {
     stars: { min: 200, max: 3000 },
     label: 'good first issue',
-    maxRepoSize: 8000,
+    maxRepoSize: 300000,
     minIssues: 3,
   },
   2: {
     stars: { min: 500, max: 8000 },
     label: 'good first issue',
-    maxRepoSize: 15000,
+    maxRepoSize: 500000,
     minIssues: 2,
   },
   3: {
     stars: { min: 1000, max: 20000 },
     label: 'good first issue',
-    maxRepoSize: 30000,
+    maxRepoSize: 800000,
     minIssues: 1,
   },
   4: {
     stars: { min: 5000, max: 50000 },
     label: 'help wanted',
-    maxRepoSize: 60000,
+    maxRepoSize: 1500000,
     minIssues: 1,
   },
   5: {
     stars: { min: 10000, max: 200000 },
     label: 'help wanted',
-    maxRepoSize: 999999,
+    maxRepoSize: 999999999,
     minIssues: 1,
   },
 };

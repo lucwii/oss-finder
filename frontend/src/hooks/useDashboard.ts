@@ -137,7 +137,10 @@ export function useDashboard() {
           error: null,
         };
 
-        writeCache(userId, newState);
+        // Only cache if we actually got recommendations — empty results could be a transient backend error
+        if (newState.recommendations.length > 0) {
+          writeCache(userId, newState);
+        }
         setState(newState);
       } catch (err: any) {
         setState((prev) => ({ ...prev, loading: false, error: err.message }));

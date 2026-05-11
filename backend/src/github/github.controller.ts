@@ -14,15 +14,6 @@ export class GithubController {
     return this.githubService.getRecommendations(language, level);
   }
 
-  @UseGuards(AuthGuard)
-  @Get('recommendations/personalized')
-  async getPersonalizedRecommendations(
-    @Query('language') language: string,
-    @Query('level') level: string,
-  ) {
-    return this.githubService.getRecommendations(language, level);
-  }
-
   @Get('recommendations/personalized')
   @UseGuards(AuthGuard)
   async getPersonalized(@Request() req) {
