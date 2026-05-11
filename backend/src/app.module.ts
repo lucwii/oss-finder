@@ -8,6 +8,7 @@ import { OnboardingModule } from './onboarding/onboarding.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { SettingsModule } from './settings/settings.module';
 import { SavedModule } from './saved/saved.module';
+import { ExploreModule } from './explore/explore.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { SavedModule } from './saved/saved.module';
     DashboardModule,
     SettingsModule,
     SavedModule,
+    ExploreModule,
   ],
   controllers: [AppController],
   providers: [AppService],
