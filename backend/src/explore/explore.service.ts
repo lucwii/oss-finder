@@ -23,10 +23,6 @@ const ALL_LANGUAGES = [
   'rust', 'java', 'csharp', 'php', 'ruby', 'cpp',
 ];
 
-const GITHUB_HEADERS = {
-  Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
-  Accept: 'application/vnd.github.v3+json',
-};
 
 @Injectable()
 export class ExploreService {
@@ -235,7 +231,10 @@ export class ExploreService {
       const response = await firstValueFrom(
         this.httpService.get('https://api.github.com/search/repositories', {
           params: { q, sort, order: 'desc', per_page: perPage },
-          headers: GITHUB_HEADERS,
+          headers: {
+            Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            Accept: 'application/vnd.github.v3+json',
+          },
         }),
       );
       return response.data.items ?? [];
