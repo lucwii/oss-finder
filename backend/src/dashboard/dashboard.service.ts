@@ -345,15 +345,19 @@ export class DashboardService {
   private async updateStreak(userId: string, stats: UserStats): Promise<void> {
     if (!stats?.user_id) return;
     const supabase = this.supabaseService.getdb();
-    const today = new Date().toISOString().split('T')[0];
+
+    // Use local date string to avoid UTC timezone edge cases
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const today = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
     const lastActive = stats.last_active_date;
 
     // Ako je korisnik već bio aktivan danas — ne menjaj streak
     if (lastActive === today) return;
 
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().split('T')[0];
+    const yesterdayDate = new Date(now);
+    yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+    const yesterdayStr = `${yesterdayDate.getFullYear()}-${pad(yesterdayDate.getMonth() + 1)}-${pad(yesterdayDate.getDate())}`;
 
     // Ako je bio aktivan juče — nastavi streak
     // Ako nije — resetuj na 1
@@ -367,7 +371,7 @@ export class DashboardService {
         days_streak: newStreak,
         max_streak: Math.max(stats.max_streak ?? 0, newStreak),
         last_active_date: today,
-        updated_at: new Date().toISOString(),
+        updated_at: now.toISOString(),
       })
       .eq('user_id', userId);
   }
