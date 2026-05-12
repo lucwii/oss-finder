@@ -100,9 +100,9 @@ export default function SmartExplorePage() {
 
   const checkSavedRepos = async (data: ExploreResult) => {
     const allRepos = [
-      ...data.forYou,
-      ...data.topicRepos,
-      ...data.trendingByLanguage.flatMap((g) => g.repos),
+      ...(data.forYou ?? []),
+      ...(data.topicRepos ?? []),
+      ...(data.trendingByLanguage ?? []).flatMap((g) => g.repos ?? []),
     ];
     const uniqueIds = [...new Set(allRepos.map((item) => item.repo.id))];
     const results = await Promise.all(
