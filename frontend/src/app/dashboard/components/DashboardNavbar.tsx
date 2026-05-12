@@ -4,13 +4,10 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  Activity,
-  Bookmark,
   ChevronDown,
   Flame,
   LogOut,
   Settings,
-  Trophy,
   User,
 } from 'lucide-react';
 import type { User as SupabaseUser } from '@supabase/supabase-js';
@@ -22,11 +19,9 @@ interface DashboardNavbarProps {
 }
 
 const NAV_ITEMS = [
-  { label: 'Dashboard', href: '/dashboard', soon: false },
-  { label: 'Explore', href: '/explore', soon: false },
-  { label: 'Saved', href: '/saved', soon: false, icon: Bookmark },
-  { label: 'Activity', href: '/activity', soon: true, icon: Activity },
-  { label: 'Leaderboard', href: '/leaderboard', soon: true, icon: Trophy },
+  { label: 'Dashboard', href: '/dashboard' },
+  { label: 'Explore', href: '/explore' },
+  { label: 'Saved', href: '/saved' },
 ];
 
 export function DashboardNavbar({ user, streak, onSignOut }: DashboardNavbarProps) {
@@ -87,30 +82,6 @@ export function DashboardNavbar({ user, streak, onSignOut }: DashboardNavbarProp
           <div className="hidden md:flex items-center gap-1">
             {NAV_ITEMS.map((item) => {
               const active = pathname === item.href;
-              if (item.soon) {
-                return (
-                  <div
-                    key={item.href}
-                    className="relative flex items-center gap-2 px-4 py-1.5 rounded-full text-sm select-none"
-                    style={{ color: '#3f3f46', cursor: 'default' }}
-                    title="Coming soon"
-                  >
-                    {item.label}
-                    <span
-                      className="px-1.5 py-0.5 rounded-full text-xs font-semibold"
-                      style={{
-                        background: 'rgba(168,85,247,0.12)',
-                        color: '#a855f7',
-                        border: '1px solid rgba(168,85,247,0.2)',
-                        fontSize: '10px',
-                        lineHeight: 1,
-                      }}
-                    >
-                      soon
-                    </span>
-                  </div>
-                );
-              }
               return (
                 <Link
                   key={item.href}
@@ -271,28 +242,6 @@ export function DashboardNavbar({ user, streak, onSignOut }: DashboardNavbarProp
             <div className="flex flex-col gap-1 pt-3">
               {NAV_ITEMS.map((item) => {
                 const active = pathname === item.href;
-                if (item.soon) {
-                  return (
-                    <div
-                      key={item.href}
-                      className="flex items-center justify-between px-4 py-2.5 rounded-xl text-sm"
-                      style={{ color: '#3f3f46' }}
-                    >
-                      {item.label}
-                      <span
-                        className="px-1.5 py-0.5 rounded-full font-semibold"
-                        style={{
-                          background: 'rgba(168,85,247,0.12)',
-                          color: '#a855f7',
-                          border: '1px solid rgba(168,85,247,0.2)',
-                          fontSize: '10px',
-                        }}
-                      >
-                        soon
-                      </span>
-                    </div>
-                  );
-                }
                 return (
                   <Link
                     key={item.href}
