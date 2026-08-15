@@ -1,8 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { Sparkles, Shield, BrainCircuit, RefreshCw } from "lucide-react";
+import { useReveal } from "@/hooks/useReveal";
 
 const FEATURES = [
   {
@@ -28,17 +27,14 @@ const FEATURES = [
 ];
 
 export default function FeaturesSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLElement>();
 
   return (
     <section id="features" className="py-32 px-6 max-w-7xl mx-auto" ref={ref}>
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
+      <div
         className="text-center mb-16"
+        style={{ opacity: inView ? undefined : 0, animation: inView ? "fade-up 0.5s ease both" : undefined }}
       >
         <span className="text-xs font-mono text-[#22c55e] tracking-widest uppercase mb-4 block">
           Features
@@ -46,30 +42,27 @@ export default function FeaturesSection() {
         <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight text-white">
           Everything you need to contribute
         </h2>
-      </motion.div>
+      </div>
 
       {/* Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
         {FEATURES.map((feat, i) => {
           const Icon = feat.icon;
           return (
-            <motion.div
+            <div
               key={feat.title}
-              initial={{ opacity: 0, y: 32 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.1 + i * 0.1 }}
-              className="group bg-[#111111] border border-[#27272a] rounded-2xl p-8 hover:-translate-y-1.5 transition-all duration-300 hover:border-[#22c55e]/30 hover:shadow-[0_8px_40px_rgba(34,197,94,0.08)] relative overflow-hidden"
+              className="group bg-[#111111] border border-[#27272a] rounded-2xl p-8 hover:-translate-y-1 transition-all duration-300 hover:border-[#22c55e]/30"
+              style={{
+                opacity: inView ? undefined : 0,
+                animation: inView ? `fade-up 0.5s ease ${i * 80}ms both` : undefined,
+              }}
             >
-              {/* Subtle corner glow */}
-              <div className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(circle at top right, rgba(34,197,94,0.08) 0%, transparent 70%)" }} />
-
               <div className="w-11 h-11 rounded-xl bg-[#22c55e]/10 border border-[#22c55e]/20 flex items-center justify-center mb-5">
                 <Icon className="w-5 h-5 text-[#22c55e]" />
               </div>
               <h3 className="text-white font-semibold text-xl mb-2.5">{feat.title}</h3>
               <p className="text-[#a1a1aa] text-sm leading-relaxed">{feat.desc}</p>
-            </motion.div>
+            </div>
           );
         })}
       </div>

@@ -1,8 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { Star, GitFork, ExternalLink } from "lucide-react";
+import { useReveal } from "@/hooks/useReveal";
 
 const REPOS = [
   {
@@ -41,17 +40,14 @@ const REPOS = [
 ];
 
 export default function DemoSection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLElement>();
 
   return (
     <section className="py-32 px-6 max-w-7xl mx-auto" ref={ref}>
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
+      <div
         className="text-center mb-16"
+        style={{ opacity: inView ? undefined : 0, animation: inView ? "fade-up 0.5s ease both" : undefined }}
       >
         <span className="text-xs font-mono text-[#22c55e] tracking-widest uppercase mb-4 block">
           Preview
@@ -62,24 +58,21 @@ export default function DemoSection() {
         <p className="text-[#a1a1aa] text-lg">
           Here&apos;s what your personalized feed looks like
         </p>
-      </motion.div>
+      </div>
 
       {/* Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {REPOS.map((repo, i) => (
-          <motion.div
+          <div
             key={repo.name}
-            initial={{ opacity: 0, y: 40 }}
-            animate={inView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.5, delay: 0.1 + i * 0.13 }}
-              className="group relative bg-[#111111] border border-[#27272a] rounded-2xl p-6 hover:-translate-y-1.5 transition-all duration-300 hover:border-[#22c55e]/30 hover:shadow-[0_8px_40px_rgba(34,197,94,0.1)] cursor-pointer overflow-hidden"
+            className="group relative bg-[#111111] border border-[#27272a] rounded-2xl p-6 hover:-translate-y-1 transition-all duration-300 hover:border-[#22c55e]/30 cursor-pointer"
+            style={{
+              opacity: inView ? undefined : 0,
+              animation: inView ? `fade-up 0.5s ease ${i * 100}ms both` : undefined,
+            }}
           >
-            {/* Glow overlay on hover */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-2xl"
-              style={{ background: "radial-gradient(ellipse at top, rgba(34,197,94,0.05) 0%, transparent 70%)" }} />
-
             {/* Repo header */}
-            <div className="flex items-start justify-between mb-4 relative z-10">
+            <div className="flex items-start justify-between mb-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#22c55e]/40 to-[#16a34a]/20 border border-[#22c55e]/20" />
@@ -112,7 +105,7 @@ export default function DemoSection() {
             <div className="border-t border-[#27272a] my-4" />
 
             {/* Issue preview */}
-            <div className="relative z-10 mb-5">
+            <div className="mb-5">
               <div className="flex items-start gap-2.5 mb-3">
                 <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-[#22c55e] flex-shrink-0" />
                 <p className="text-sm text-[#e4e4e7] leading-snug font-medium">
@@ -127,7 +120,7 @@ export default function DemoSection() {
             </div>
 
             {/* Match score */}
-            <div className="relative z-10">
+            <div>
               <div className="flex items-center justify-between mb-2">
                 <span className="text-xs text-[#a1a1aa] font-mono">Match Score</span>
                 <span className="text-xs font-bold text-[#22c55e] font-mono">
@@ -135,15 +128,16 @@ export default function DemoSection() {
                 </span>
               </div>
               <div className="w-full h-1.5 bg-[#27272a] rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full rounded-full bg-gradient-to-r from-[#16a34a] to-[#22c55e]"
-                  initial={{ width: 0 }}
-                  animate={inView ? { width: `${repo.match}%` } : {}}
-                  transition={{ duration: 0.8, delay: 0.4 + i * 0.15, ease: "easeOut" }}
+                <div
+                  className="h-full rounded-full bg-[#22c55e]"
+                  style={{
+                    width: inView ? `${repo.match}%` : 0,
+                    transition: `width 0.8s ease ${0.2 + i * 0.1}s`,
+                  }}
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </section>

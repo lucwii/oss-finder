@@ -1,46 +1,26 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { useRef } from "react";
 import { ArrowRight } from "lucide-react";
+import { useReveal } from "@/hooks/useReveal";
 
 export default function CTASection() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLElement>();
 
   return (
     <section className="py-32 px-6 relative overflow-hidden" ref={ref}>
-      {/* Radial gradient bg */}
+      {/* Subtle radial gradient bg */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(34,197,94,0.07) 0%, transparent 70%)",
+            "radial-gradient(ellipse 70% 60% at 50% 50%, rgba(34,197,94,0.06) 0%, transparent 70%)",
         }}
       />
 
-      {/* Decorative grid */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-30"
-        style={{
-          backgroundImage:
-            "linear-gradient(rgba(34,197,94,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.04) 1px, transparent 1px)",
-          backgroundSize: "40px 40px",
-        }}
-      />
-
-      <motion.div
-        initial={{ opacity: 0, y: 32 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
         className="relative z-10 max-w-3xl mx-auto text-center flex flex-col items-center gap-8"
+        style={{ opacity: inView ? undefined : 0, animation: inView ? "fade-up 0.5s ease both" : undefined }}
       >
-        {/* Top badge */}
-        <div className="inline-flex items-center gap-2 bg-[#111111] border border-[#27272a] rounded-full px-4 py-1.5 text-sm text-[#a1a1aa]">
-          <span className="w-2 h-2 rounded-full bg-[#22c55e]" />
-          Join 10,000+ contributors
-        </div>
-
         <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white leading-tight">
           Ready to make your first contribution?
         </h2>
@@ -57,7 +37,7 @@ export default function CTASection() {
         <p className="text-[#52525b] text-sm">
           No credit card required&nbsp;&nbsp;•&nbsp;&nbsp;Free forever
         </p>
-      </motion.div>
+      </div>
     </section>
   );
 }

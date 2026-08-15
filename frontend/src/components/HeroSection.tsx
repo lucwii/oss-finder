@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
 import { ArrowRight, ChevronDown } from "lucide-react";
 import TerminalAnimation from "./TerminalAnimation";
 
@@ -46,35 +45,18 @@ function StatNumber({ value, suffix }: { value: number; suffix: string }) {
 export default function HeroSection() {
   return (
     <section className="relative hero-grid min-h-screen flex flex-col items-center justify-center pt-16 overflow-hidden">
-      {/* Radial glow center */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div
-          className="w-[600px] h-[400px] rounded-full"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(34,197,94,0.08) 0%, transparent 70%)",
-          }}
-        />
-      </div>
-
       <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8">
         {/* Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1, duration: 0.5 }}
+        <div
+          style={{ animation: "fadeSlideUp 0.45s ease both" }}
           className="inline-flex items-center gap-2 bg-[#111111] border border-[#27272a] rounded-full px-4 py-1.5 text-sm text-[#a1a1aa]"
         >
           <span className="dot-pulse w-2 h-2 rounded-full bg-[#22c55e]" />
-          ✦ Open Source Contribution Finder
-        </motion.div>
+          Open Source Contribution Finder
+        </div>
 
         {/* Headline */}
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
-        >
+        <div style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "60ms" }}>
           <h1 className="text-[clamp(48px,8vw,84px)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white">
             Find Your First
             <br />
@@ -82,34 +64,28 @@ export default function HeroSection() {
             <br />
             Contribution
           </h1>
-        </motion.div>
+        </div>
 
         {/* Subheadline */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35, duration: 0.5 }}
+        <p
+          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "120ms" }}
           className="text-[#a1a1aa] text-lg leading-relaxed max-w-xl"
         >
           Stop scrolling through thousands of repositories. Get matched with
           projects that fit your skills and start contributing today.
-        </motion.p>
+        </p>
 
         {/* Terminal */}
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.6 }}
+        <div
+          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "180ms" }}
           className="w-full max-w-xl"
         >
           <TerminalAnimation />
-        </motion.div>
+        </div>
 
         {/* CTA buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.65, duration: 0.5 }}
+        <div
+          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "240ms" }}
           className="flex flex-wrap gap-4 justify-center"
         >
           <button className="btn-glow group flex items-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:scale-[1.02]">
@@ -120,14 +96,12 @@ export default function HeroSection() {
             See how it works
             <ChevronDown className="w-4 h-4" />
           </button>
-        </motion.div>
+        </div>
 
         {/* Stats bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.5 }}
-          className="mt-4 flex items-center gap-6 bg-[#111111]/80 backdrop-blur-sm border border-[#27272a] rounded-2xl px-8 py-4"
+        <div
+          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "300ms" }}
+          className="mt-4 flex items-center gap-6 bg-[#111111] border border-[#27272a] rounded-2xl px-8 py-4"
         >
           {STATS.map((stat, i) => (
             <div key={i} className="flex items-center gap-6">
@@ -148,7 +122,7 @@ export default function HeroSection() {
               </div>
             </div>
           ))}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

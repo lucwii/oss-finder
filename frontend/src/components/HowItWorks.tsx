@@ -1,9 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
-import { useRef } from "react";
 import { UserCircle, GitBranch, Code2 } from "lucide-react";
+import { useReveal } from "@/hooks/useReveal";
 
 const STEPS = [
   {
@@ -27,17 +25,14 @@ const STEPS = [
 ];
 
 export default function HowItWorks() {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-80px" });
+  const { ref, inView } = useReveal<HTMLElement>();
 
   return (
     <section id="how-it-works" className="py-32 px-6 max-w-7xl mx-auto" ref={ref}>
       {/* Section header */}
-      <motion.div
-        initial={{ opacity: 0, y: 24 }}
-        animate={inView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6 }}
+      <div
         className="text-center mb-20"
+        style={{ opacity: inView ? undefined : 0, animation: inView ? "fade-up 0.5s ease both" : undefined }}
       >
         <span className="text-xs font-mono text-[#22c55e] tracking-widest uppercase mb-4 block">
           Process
@@ -48,7 +43,7 @@ export default function HowItWorks() {
         <p className="text-[#a1a1aa] text-lg">
           Three steps to your first pull request
         </p>
-      </motion.div>
+      </div>
 
       {/* Steps */}
       <div className="relative flex flex-col md:flex-row gap-6">
@@ -60,13 +55,14 @@ export default function HowItWorks() {
         {STEPS.map((step, i) => {
           const Icon = step.icon;
           return (
-            <motion.div
+            <div
               key={step.step}
-              initial={{ opacity: 0, y: 32 }}
-              animate={inView ? { opacity: 1, y: 0 } : {}}
-              transition={{ duration: 0.5, delay: 0.15 + i * 0.12 }}
-              className="group relative flex-1 bg-[#111111] border border-[#27272a] rounded-2xl p-8 hover:-translate-y-1.5 transition-all duration-300 hover:border-[#22c55e]/30 hover:shadow-[0_0_30px_rgba(34,197,94,0.08)]"
-              style={{ borderTop: "2px solid #22c55e" }}
+              className="group relative flex-1 bg-[#111111] border border-[#27272a] rounded-2xl p-8 hover:-translate-y-1 transition-all duration-300 hover:border-[#22c55e]/30"
+              style={{
+                borderTop: "2px solid #22c55e",
+                opacity: inView ? undefined : 0,
+                animation: inView ? `fade-up 0.5s ease ${i * 100}ms both` : undefined,
+              }}
             >
               {/* Step number */}
               <div className="flex items-center justify-between mb-6">
@@ -79,7 +75,7 @@ export default function HowItWorks() {
               </div>
               <h3 className="text-white font-semibold text-xl mb-3">{step.title}</h3>
               <p className="text-[#a1a1aa] text-sm leading-relaxed">{step.desc}</p>
-            </motion.div>
+            </div>
           );
         })}
       </div>
