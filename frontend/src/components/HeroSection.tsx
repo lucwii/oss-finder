@@ -1,127 +1,140 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { ArrowRight, ChevronDown } from "lucide-react";
-import TerminalAnimation from "./TerminalAnimation";
-
-const STATS = [
-  { value: 50, suffix: "K+", label: "Repositories" },
-  { value: 10, suffix: "K+", label: "Issues" },
-  { label: "Free Forever", value: null, suffix: null },
-];
-
-function useCountUp(target: number, duration = 1200) {
-  const [count, setCount] = useState(0);
-  const started = useRef(false);
-
-  useEffect(() => {
-    if (started.current) return;
-    started.current = true;
-    const start = performance.now();
-    const step = (now: number) => {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - Math.pow(1 - progress, 3);
-      setCount(Math.floor(eased * target));
-      if (progress < 1) requestAnimationFrame(step);
-      else setCount(target);
-    };
-    requestAnimationFrame(step);
-  }, [target, duration]);
-
-  return count;
-}
-
-function StatNumber({ value, suffix }: { value: number; suffix: string }) {
-  const count = useCountUp(value, 1400);
-  return (
-    <span className="font-bold text-white text-lg">
-      {count}
-      {suffix}
-    </span>
-  );
-}
+import { ArrowRight, ChevronDown, GitFork, Sparkles, Star } from "lucide-react";
 
 export default function HeroSection() {
   return (
-    <section className="relative hero-grid min-h-screen flex flex-col items-center justify-center pt-16 overflow-hidden">
-      <div className="relative z-10 max-w-4xl mx-auto px-6 text-center flex flex-col items-center gap-8">
-        {/* Badge */}
-        <div
-          style={{ animation: "fadeSlideUp 0.45s ease both" }}
-          className="inline-flex items-center gap-2 bg-[#111111] border border-[#27272a] rounded-full px-4 py-1.5 text-sm text-[#a1a1aa]"
-        >
-          <span className="dot-pulse w-2 h-2 rounded-full bg-[#22c55e]" />
-          Open Source Contribution Finder
-        </div>
+    <section className="relative min-h-screen flex items-center pt-16 overflow-hidden bg-[#0a0a0a]">
+      <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-10 w-full py-24">
+        <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+          {/* Left column */}
+          <div className="flex flex-col gap-6 max-w-xl">
+            <div
+              style={{ animation: "fadeSlideUp 0.45s ease both" }}
+              className="inline-flex items-center gap-2 self-start bg-[#111111] border border-[#27272a] rounded-full px-4 py-1.5 text-sm text-[#a1a1aa]"
+            >
+              <span className="dot-pulse w-2 h-2 rounded-full bg-[#22c55e]" />
+              Open Source Contribution Finder
+            </div>
 
-        {/* Headline */}
-        <div style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "60ms" }}>
-          <h1 className="text-[clamp(48px,8vw,84px)] font-extrabold leading-[1.05] tracking-[-0.03em] text-white">
-            Find Your First
-            <br />
-            <span className="gradient-text">Open Source</span>
-            <br />
-            Contribution
-          </h1>
-        </div>
+            <h1
+              style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "60ms" }}
+              className="text-[clamp(40px,6vw,64px)] font-extrabold leading-[1.08] tracking-[-0.02em] text-white"
+            >
+              Find Your First
+              <br />
+              <span className="gradient-text">Open Source</span> Contribution.
+            </h1>
 
-        {/* Subheadline */}
-        <p
-          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "120ms" }}
-          className="text-[#a1a1aa] text-lg leading-relaxed max-w-xl"
-        >
-          Stop scrolling through thousands of repositories. Get matched with
-          projects that fit your skills and start contributing today.
-        </p>
+            <p
+              style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "120ms" }}
+              className="text-[#a1a1aa] text-lg leading-relaxed max-w-md"
+            >
+              Mergly matches you with repositories and issues that fit your
+              skills, so you can stop searching and start contributing.
+            </p>
 
-        {/* Terminal */}
-        <div
-          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "180ms" }}
-          className="w-full max-w-xl"
-        >
-          <TerminalAnimation />
-        </div>
+            <div
+              style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "180ms" }}
+              className="flex flex-wrap gap-4"
+            >
+              <button className="btn-glow group flex items-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:scale-[1.02]">
+                Find Your Match
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
+              </button>
+              <button className="flex items-center gap-2 border border-[#27272a] hover:border-white/20 text-white font-medium px-6 py-3 rounded-xl text-base transition-all duration-200 hover:bg-white/5">
+                See how it works
+                <ChevronDown className="w-4 h-4" />
+              </button>
+            </div>
 
-        {/* CTA buttons */}
-        <div
-          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "240ms" }}
-          className="flex flex-wrap gap-4 justify-center"
-        >
-          <button className="btn-glow group flex items-center gap-2 bg-[#22c55e] hover:bg-[#16a34a] text-black font-semibold px-6 py-3 rounded-xl text-base transition-all duration-200 hover:scale-[1.02]">
-            Find Your Match
-            <ArrowRight className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" />
-          </button>
-          <button className="flex items-center gap-2 border border-[#27272a] hover:border-white/20 text-white font-medium px-6 py-3 rounded-xl text-base transition-all duration-200 hover:bg-white/5">
-            See how it works
-            <ChevronDown className="w-4 h-4" />
-          </button>
-        </div>
+            <div
+              style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "240ms" }}
+              className="flex items-center gap-4 text-sm text-[#a1a1aa] pt-2"
+            >
+              <span className="flex items-center gap-1.5">
+                <GitFork className="w-3.5 h-3.5" />
+                50,000+ repositories
+              </span>
+              <span className="w-1 h-1 rounded-full bg-[#27272a]" />
+              <span>Free forever</span>
+            </div>
+          </div>
 
-        {/* Stats bar */}
-        <div
-          style={{ animation: "fadeSlideUp 0.45s ease both", animationDelay: "300ms" }}
-          className="mt-4 flex items-center gap-6 bg-[#111111] border border-[#27272a] rounded-2xl px-8 py-4"
-        >
-          {STATS.map((stat, i) => (
-            <div key={i} className="flex items-center gap-6">
-              {i > 0 && (
-                <span className="text-[#27272a] text-xl select-none">•</span>
-              )}
-              <div className="flex flex-col items-center">
-                {stat.value !== null ? (
-                  <StatNumber value={stat.value} suffix={stat.suffix!} />
-                ) : (
-                  <span className="font-bold text-white text-lg">
-                    {stat.label}
-                  </span>
-                )}
-                {stat.value !== null && (
-                  <span className="text-xs text-[#a1a1aa]">{stat.label}</span>
-                )}
+          {/* Right column — floating match card */}
+          <div
+            style={{ animation: "fadeSlideUp 0.5s ease both", animationDelay: "160ms" }}
+            className="relative hidden lg:block h-[420px]"
+          >
+            {/* Back card, muted */}
+            <div
+              className="absolute top-16 left-16 w-[340px] h-[280px] bg-[#111111] border border-[#27272a] rounded-2xl opacity-50"
+              style={{ transform: "rotate(-6deg)" }}
+            />
+
+            {/* Front card */}
+            <div
+              className="absolute top-4 left-4 w-[340px] bg-[#111111] border border-[#27272a] rounded-2xl p-6 shadow-2xl"
+              style={{
+                transform: "rotate(2deg)",
+                animation: "float-2 5s ease-in-out infinite",
+              }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[#22c55e]/40 to-[#16a34a]/20 border border-[#22c55e]/20" />
+                    <span className="font-mono text-sm font-semibold text-white">
+                      facebook/react
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-3 mt-2">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[#eab308]" />
+                      <span className="text-xs text-[#a1a1aa]">JavaScript</span>
+                    </div>
+                    <div className="flex items-center gap-1 text-xs text-[#a1a1aa]">
+                      <Star className="w-3 h-3" />
+                      218k
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[#27272a] my-4" />
+
+              <div className="mb-5">
+                <div className="flex items-start gap-2.5 mb-3">
+                  <div className="mt-0.5 w-1.5 h-1.5 rounded-full bg-[#22c55e] flex-shrink-0" />
+                  <p className="text-sm text-[#e4e4e7] leading-snug font-medium">
+                    Fix TypeScript types for useRef hook
+                  </p>
+                </div>
+                <span className="inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border bg-[#22c55e]/15 text-[#22c55e] border-[#22c55e]/30">
+                  good first issue
+                </span>
+              </div>
+
+              <div>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs text-[#a1a1aa] font-mono">Match Score</span>
+                  <span className="text-xs font-bold text-[#22c55e] font-mono">98%</span>
+                </div>
+                <div className="w-full h-1.5 bg-[#27272a] rounded-full overflow-hidden">
+                  <div className="h-full rounded-full bg-[#22c55e]" style={{ width: "98%" }} />
+                </div>
               </div>
             </div>
-          ))}
+
+            {/* Floating badge */}
+            <div
+              className="absolute -top-3 -left-3 flex items-center gap-1.5 bg-[#0a0a0a] border border-[#27272a] rounded-full px-3 py-1.5 text-xs font-medium text-white shadow-lg"
+              style={{ animation: "float-1 4s ease-in-out infinite" }}
+            >
+              <Sparkles className="w-3.5 h-3.5 text-[#22c55e]" />
+              Matched for you
+            </div>
+          </div>
         </div>
       </div>
     </section>
