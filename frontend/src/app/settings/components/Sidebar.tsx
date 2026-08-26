@@ -17,7 +17,7 @@ interface Props {
 
 export function Sidebar({ activeTab, onChange }: Props) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, width: '100%' }}>
+    <div className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-visible -mx-4 px-4 md:mx-0 md:px-0 pb-1 md:pb-0 w-full">
       {TABS.map(({ key, label, icon: Icon }) => {
         const isActive = activeTab === key;
         const isDanger = key === 'danger';
@@ -27,6 +27,7 @@ export function Sidebar({ activeTab, onChange }: Props) {
           <button
             key={key}
             onClick={() => onChange(key)}
+            className="flex-shrink-0 md:flex-shrink md:w-full whitespace-nowrap"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -42,7 +43,6 @@ export function Sidebar({ activeTab, onChange }: Props) {
               cursor: 'pointer',
               transition: 'all 150ms',
               textAlign: 'left',
-              width: '100%',
             }}
             onMouseEnter={(e) => {
               if (!isActive) (e.currentTarget as HTMLButtonElement).style.background = '#111111';

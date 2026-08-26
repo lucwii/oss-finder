@@ -88,7 +88,7 @@ export default function SettingsPage() {
 
         {/* Page header */}
         <div style={{ borderBottom: '1px solid #27272a', padding: '24px 0' }}>
-          <div style={{ maxWidth: 960, margin: '0 auto', padding: '0 24px' }}>
+          <div className="max-w-[960px] mx-auto px-4 sm:px-6">
             <button
               onClick={() => router.push('/dashboard')}
               style={{
@@ -110,21 +110,21 @@ export default function SettingsPage() {
               <ArrowLeft size={14} />
               Back to Dashboard
             </button>
-            <h1 style={{ fontSize: 28, fontWeight: 700, color: '#ffffff', marginBottom: 4 }}>Settings</h1>
+            <h1 className="text-2xl md:text-[28px]" style={{ fontWeight: 700, color: '#ffffff', marginBottom: 4 }}>Settings</h1>
             <p style={{ color: '#a1a1aa', fontSize: 14 }}>Manage your account and preferences</p>
           </div>
         </div>
 
-        <div style={{ maxWidth: 960, margin: '0 auto', padding: '32px 24px' }}>
-          <div style={{ display: 'flex', gap: 32, alignItems: 'flex-start' }}>
+        <div className="max-w-[960px] mx-auto px-4 sm:px-6 py-6 sm:py-8">
+          <div className="flex flex-col md:flex-row gap-6 md:gap-8 items-start">
 
             {/* Sidebar */}
-            <div style={{ width: 220, flexShrink: 0 }}>
+            <div className="w-full md:w-[220px] md:flex-shrink-0">
               <Sidebar activeTab={activeTab} onChange={setActiveTab} />
             </div>
 
             {/* Tab content */}
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="flex-1 min-w-0 w-full">
               {activeTab === 'preferences' && (
                 <PreferencesTab
                   isLoading={isLoading}
